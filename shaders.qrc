@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/shaders">
+        <file>obj_fragment.fsh</file>
+        <file>obj_vertex.vsh</file>
+        <file>sprite_vertex.vsh</file>
+        <file>sprite_fragment.fsh</file>
+    </qresource>
+    <qresource prefix="/images"/>
+    <qresource prefix="/img">
+        <file>test_pic.jpg</file>
+    </qresource>
+</RCC>
