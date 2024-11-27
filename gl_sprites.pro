@@ -19,14 +19,16 @@ SOURCES += main.cpp \
     geometry.cpp \
     graphicswidget.cpp \
     mainwindow.cpp \
-    sprite.cpp
+    sprite.cpp \
+    text.cpp
 
 HEADERS += \
     cubegeometry.h \
     geometry.h \
     graphicswidget.h \
     mainwindow.h \
-    sprite.h
+    sprite.h \
+    text.h
 
 RESOURCES += \
     shaders.qrc

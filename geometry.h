@@ -22,13 +22,13 @@ public:
 
     virtual void construct() = 0;
 
-    void render(QOpenGLShaderProgram *program);
     void setPosition(QVector3D newPos);
-    QVector3D position() const;
+    QVector3D position() const { return pos; }
 
     float rotation() const { return rotationAngle; }
 
     void updateRotation();
+    void render(QOpenGLShaderProgram *program);
 
 protected:
     void createBuffers(QVector<VertexData>& vertices, QVector<GLushort>& indices);

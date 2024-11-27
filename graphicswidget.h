@@ -10,6 +10,7 @@
 
 #include "cubegeometry.h"
 #include "sprite.h"
+#include "text.h"
 
 class GraphicsWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -28,13 +29,16 @@ protected:
 
 private:
     const int UPDATE_INTERVAL = 20;
+    const float IMG_VIEW_WIDTH = 200.0f;
 
     QBasicTimer timer;
+
+    QVector2D imgViewSize;
 
     float time;
 
     QVector3D eyePos;
-    QVector3D lightInitialPos;
+    QVector3D lightPos;
 
     QMatrix4x4 projection;
     QMatrix4x4 orthoProjection;
@@ -44,6 +48,7 @@ private:
 
     Geometry *cube;
     Sprite *testSprite;
+    Text *testText;
 
     void initShaders();
     void initProgram(QOpenGLShaderProgram &program, QString vertName, QString fragName);
@@ -52,6 +57,7 @@ private:
     void renderScene();
     void renderSceneObject(QMatrix4x4 &viewProjMatrix);
     void renderSprite(QMatrix4x4 &projMatrix);
+    void renderText(QMatrix4x4 &projMatrix);
 };
 
 #endif // GRAPHICSWIDGET_H

@@ -28,7 +28,7 @@ void Sprite::constructGeometry()
 
     texture.setData(textureImage);
 
-    SpriteVertedData vertices[] = {
+    SpriteVertexData vertices[] = {
         {{-halfWidth, -halfHeight}, {0.0f, 0.0f}},
         {{halfWidth, -halfHeight}, {1.0f, 0.0f}},
         {{-halfWidth, halfHeight}, {0.0f, 1.0f}},
@@ -50,6 +50,7 @@ void Sprite::render(QOpenGLShaderProgram &program, QMatrix4x4 &proj)
     QMatrix4x4 transforms;
     transforms.setToIdentity();
     transforms.translate(pos.x(), pos.y(), 0.0f);
+    transforms.rotate(rot, 0.0f, 0.0f, 1.0f);
     program.setUniformValue("u_mvp", proj * transforms);
 
     // Texture
@@ -65,15 +66,15 @@ void Sprite::render(QOpenGLShaderProgram &program, QMatrix4x4 &proj)
     // Vertex position
     int vertexLocation = program.attributeLocation("a_pos"); // !
     program.enableAttributeArray(vertexLocation);
-    program.setAttributeBuffer(vertexLocation, GL_FLOAT, offset, 2, sizeof(SpriteVertedData));
+    program.setAttributeBuffer(vertexLocation, GL_FLOAT, offset, 2, sizeof(SpriteVertexData));
 
     offset += sizeof(QVector2D);
 
     // Texture coordinate
     int texcoordLocation = program.attributeLocation("a_texcoord"); // !
     program.enableAttributeArray(texcoordLocation);
-    program.setAttributeBuffer(texcoordLocation, GL_FLOAT, offset, 2, sizeof(SpriteVertedData));
+    program.setAttributeBuffer(texcoordLocation, GL_FLOAT, offset, 2, sizeof(SpriteVertexData));
 
     // Draw
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, NUM_VERTICES, GL_UNSIGNED_SHORT, 0);
 }

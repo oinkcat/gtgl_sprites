@@ -1,6 +1,8 @@
 #include "geometry.h"
 
-Geometry::Geometry() : indicesBuf(QOpenGLBuffer::Type::IndexBuffer)
+Geometry::Geometry()
+    : indicesBuf(QOpenGLBuffer::Type::IndexBuffer),
+      rotationAngle(0)
 {
     initializeOpenGLFunctions();
 
@@ -17,11 +19,6 @@ Geometry::~Geometry()
 void Geometry::setPosition(QVector3D newPos)
 {
     pos = newPos;
-}
-
-QVector3D Geometry::position() const
-{
-    return pos;
 }
 
 void Geometry::updateRotation()
@@ -55,7 +52,7 @@ void Geometry::render(QOpenGLShaderProgram *program)
 
     offset += sizeof(QVector3D);
 
-    // Texture coordinates
+    // Normals
     int texcoordLocation = program->attributeLocation("a_normal"); // !
     program->enableAttributeArray(texcoordLocation);
     program->setAttributeBuffer(texcoordLocation, GL_FLOAT, offset, 3, sizeof(VertexData));
@@ -67,6 +64,6 @@ void Geometry::render(QOpenGLShaderProgram *program)
     program->enableAttributeArray(colorLocation);
     program->setAttributeBuffer(colorLocation, GL_FLOAT, offset, 3, sizeof(VertexData));
 
-    // Draw cube geometry using indices from VBO 1
+    // Draw
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
 }

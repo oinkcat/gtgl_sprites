@@ -20,5 +20,5 @@ void main(void)
 
     float light_intens_w_ambient = max(AMBIENT_INTENSITY, light_intensity);
 
-    out_color = vec4(v_color, 1.0f) * light_intens_w_ambient;
+    out_color = vec4(v_color * light_intens_w_ambient, 1.0f);
 }

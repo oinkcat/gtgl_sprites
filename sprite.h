@@ -9,7 +9,7 @@
 #include <QImage>
 #include <QOpenGLTexture>
 
-struct SpriteVertedData
+struct SpriteVertexData
 {
     QVector2D pos;
     QVector2D texcoord;
@@ -24,6 +24,9 @@ public:
     QVector2D position() const { return pos; }
     void setPosition(float x, float y) { pos = QVector2D(x, y); }
 
+    float rotation() const { return rot; }
+    void setRotation(float angle) { rot = angle; }
+
     void render(QOpenGLShaderProgram &program, QMatrix4x4 &proj);
 
 private:
@@ -37,6 +40,7 @@ private:
     QOpenGLTexture texture;
 
     QVector2D pos;
+    float rot;
 
     void constructGeometry();
 };

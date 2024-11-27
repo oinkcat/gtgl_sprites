@@ -2,9 +2,9 @@
 
 GraphicsWidget::GraphicsWidget(QWidget *parent)
     : QOpenGLWidget(parent),
+      time(0.0f),
       eyePos(0.0f, 12.0f, 18.0f),
-      lightInitialPos(0.0f, 5.0f, 3.0f),
-      time(0.0f)
+      lightPos(5.0f, 5.0f, 5.0f)
 {
 }
 
@@ -15,7 +15,9 @@ void GraphicsWidget::initializeGL()
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Resources
     initShaders();
@@ -54,22 +56,25 @@ void GraphicsWidget::constructScene()
     cube = new CubeGeometry();
     cube->setPosition(QVector3D(0.0f, 0.0f, 0.0f));
 
-    testSprite = new Sprite(":/img/test_pic.jpg");
+    testSprite = new Sprite(":/imgs/test_alpha.png");
+
+    testText = new Text("Hello World!");
 }
 
 void GraphicsWidget::resizeGL(int w, int h)
 {
     const qreal zNear = 2.0, zFar = 30.0, fov = 45.0;
-    qreal size = 100.0f;
 
     qreal ratio = (qreal)w / (qreal)h;
     projection.setToIdentity();
     projection.perspective(fov, ratio, zNear, zFar);
 
-    qreal vSize = size;
+    qreal vSize = IMG_VIEW_WIDTH;
     qreal hSize = vSize * ratio;
+    imgViewSize = QVector2D(hSize, vSize);
+
     orthoProjection.setToIdentity();
-    orthoProjection.ortho(-hSize, hSize, -vSize, vSize, -2.0, 2.0);
+    orthoProjection.ortho(0, hSize, vSize, 0, -2.0, 2.0);
 }
 
 void GraphicsWidget::timerEvent(QTimerEvent *event)
@@ -79,13 +84,17 @@ void GraphicsWidget::timerEvent(QTimerEvent *event)
     Q_UNUSED(event);
 
     cube->updateRotation();
-    update();
 
-    float sX = cos(time) * SPRITE_R;
-    float sY = sin(time) * SPRITE_R;
+    float sX = cos(time) * SPRITE_R + imgViewSize.x() / 2;
+    float sY = sin(time) * SPRITE_R + imgViewSize.y() / 2;
     testSprite->setPosition(sX, sY);
+    testSprite->setRotation(time * 15.0f);
+
+    testText->setText(QString("Rotation: %1").arg(cube->rotation()));
 
     time += 0.1f;
+
+    update();
 }
 
 void GraphicsWidget::paintGL()
@@ -102,8 +111,13 @@ void GraphicsWidget::renderScene()
     viewMatrix.lookAt(eyePos, QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f));
     QMatrix4x4 viewProjMatrix = projection * viewMatrix;
 
+
+    glEnable(GL_DEPTH_TEST);
     renderSceneObject(viewProjMatrix);
+
+    glDisable(GL_DEPTH_TEST);
     renderSprite(orthoProjection);
+    renderText(orthoProjection);
 }
 
 // Render rotating cube
@@ -121,8 +135,8 @@ void GraphicsWidget::renderSceneObject(QMatrix4x4 &viewProjMatrix)
     objProgram.setUniformValue("u_mvp", viewProjMatrix * cubeMatrix);
 
     // Light for cube
-    QMatrix4x4 invCubeRotation = cubeRotationMatrix.inverted();
-    objProgram.setUniformValue("u_light", invCubeRotation * lightInitialPos);
+    QMatrix4x4 invCubeTransform = cubeMatrix.inverted();
+    objProgram.setUniformValue("u_light", invCubeTransform * lightPos);
 
     cube->render(&objProgram);
 }
@@ -132,4 +146,11 @@ void GraphicsWidget::renderSprite(QMatrix4x4 &projMatrix)
 {
     spriteProgram.bind();
     testSprite->render(spriteProgram, projMatrix);
+}
+
+// Render 2D text
+void GraphicsWidget::renderText(QMatrix4x4 &projMatrix)
+{
+    spriteProgram.bind();
+    testText->render(spriteProgram, projMatrix);
 }

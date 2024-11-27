@@ -6,7 +6,10 @@
         <file>sprite_fragment.fsh</file>
     </qresource>
     <qresource prefix="/images"/>
-    <qresource prefix="/img">
-        <file>test_pic.jpg</file>
+    <qresource prefix="/img"/>
+    <qresource prefix="/">
+        <file>imgs/test_alpha.png</file>
+        <file>imgs/test_pic.jpg</file>
+        <file>imgs/test_font.png</file>
     </qresource>
 </RCC>
